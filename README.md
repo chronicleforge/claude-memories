@@ -56,6 +56,7 @@ See [CLAUDE.md](CLAUDE.md) for complete workflow guide.
 | **QUICKSTART.md** | 4-step setup guide (start here!) |
 | **SETUP_INSTRUCTIONS.md** | Detailed setup overview |
 | **CLAUDE.md** | Workflow guidelines for Claude sessions |
+| **MCP_API_REFERENCE.md** | Complete API documentation (8 tools) |
 | **.claude/settings.json.example** | MCP config template + hooks |
 | **scripts/hydrate-memory.sh** | SessionStart hook (auto-context) |
 | **scripts/validate-memory-write.sh** | PostToolUse hook (write validation) |
