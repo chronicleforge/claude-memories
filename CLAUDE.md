@@ -1,161 +1,140 @@
-# memories Workflow Guide
+# Memories Knowledge Base
 
 Persistent memory system for Claude Code sessions. Store patterns, gotchas, and learnings.
 
-> **For complete API reference** → See [MCP_API_REFERENCE.md](MCP_API_REFERENCE.md)
+> **Full API Reference** → [MCP_API_REFERENCE.md](MCP_API_REFERENCE.md)
 
-## Mandatory: Every Session Start
+---
+
+## CRITICAL: Mandatory Checklist
+
+**Every response involving this project MUST start with:**
+
+```
+**Memory Check [x/3]:**
+- [ ] Session Start: Called `namespaces()` to get available group_ids
+- [ ] Before Work: Called `recall()` with relevant keywords
+- [ ] After Discovery: Called `remember()` for any new patterns/fixes
+```
+
+**If this checklist is missing, the response is INVALID.**
+
+---
+
+## MANDATORY: Session Start Protocol
+
+**FIRST THING** in every session - no exceptions:
 
 ```python
 namespaces()
-# → {"groups": [{"group_id": "personal"}, ...]}
+# → Returns available group_ids - COPY these for all subsequent calls
 ```
 
-**Important**: Remember the `group_id` for all subsequent calls!
+❌ **Skipping this = All memory operations will fail**
 
 ---
 
-## Typical Workflow
+## MANDATORY: When to Use Recall
 
-### 1. Before Coding (Peek Mode - Free!)
-```python
-recall(query="what you need", group_ids=["personal"], max_tokens=0)
-# → {"total_available": 5, "token_estimate": 2400}
-# Zero tokens spent - just checking what's available
-```
+**BEFORE touching any code or answering questions:**
 
-### 2. Load if Needed (Budget Mode)
-```python
-recall(query="what you need", group_ids=["personal"], max_tokens=2000)
-# → Load up to 2000 tokens of relevant context
-```
+| User Says | You MUST Run |
+|-----------|--------------|
+| "What's the status?" | `recall(query="status implementation features")` |
+| "Is everything committed?" | `recall(query="recent changes uncommitted pending")` |
+| "How does X work?" | `recall(query="X implementation pattern")` |
+| Before any build | `recall(query="pending changes blockers")` |
+| "What did we do last time?" | `recall(query="recent session progress")` |
+| Any architecture question | `recall(query="architecture decisions patterns")` |
 
-### 3. After Finding Something Important
+### Recall API
+
 ```python
-remember(
-  content="What you discovered (bug fix, pattern, gotcha)",
-  group_id="personal",
-  context="Where this came from (optional citation)"
+mcp__memories__recall(
+    query="your search terms",
+    group_ids=["your_namespace"],  # From namespaces() call
+    max_tokens=0  # Peek first (free), then set budget
 )
 ```
 
----
-
-## How Hooks Work
-
-### SessionStart Hook
-- Automatically runs when Claude Code session starts
-- **Transparent** - you won't see anything
-- Prepares memory environment
-- Non-blocking - session runs even if memory is offline
-
-### PostToolUse Hook
-- Automatically runs after `remember()` call
-- Validates that write succeeded
-- **Shows error** if remember() failed
-- Stops execution if error detected
+**Workflow:**
+1. Peek: `max_tokens=0` → Get count + token estimate (FREE)
+2. Load: `max_tokens=2000` → Actually retrieve content
 
 ---
 
-## Common Patterns
+## MANDATORY: When to Use Remember
 
-| Situation | Command |
-|-----------|---------|
-| "What did I learn before?" | `recall(query="learnings", group_ids=["personal"], max_tokens=0)` → peek first |
-| "Remember this bug fix" | `remember(content="Bug in X was Y, fix is Z", group_id="personal")` |
-| "Remove old note" | `forget(id="memory_id")` |
-| "List my namespaces" | `namespaces()` |
-| "Show recent memories" | `list(group_ids=["personal"], max_items=10)` |
-| "Search multiple projects" | `recall(query="pattern", group_ids=["personal", "project-x"])` |
+**IMMEDIATELY after discovering:**
 
----
+| Discovery | Action |
+|-----------|--------|
+| Bug fix with root cause | `remember()` with cause + solution |
+| New pattern learned | `remember()` with pattern + example |
+| API/layout change | `remember()` with before/after |
+| Gotcha/edge case | `remember()` with trigger + fix |
+| Architecture decision | `remember()` with rationale |
 
-## Important Rules
+### Remember API
 
-❌ **New session without calling namespaces()?** → Error!
-✅ **Always call namespaces() FIRST**
-
-❌ **recall() with wrong group_id?** → 0 results
-✅ **Copy group_id from namespaces() response**
-
-❌ **remember() without group_id?** → Error!
-✅ **Always include group_id**
-
-❌ **Large recalls without max_tokens?** → Token explosion
-✅ **Always peek first (max_tokens=0), then decide budget**
-
----
-
-## Pro Tips
-
-- **Peek is free**: `max_tokens=0` gives you count + estimate, no tokens spent
-- **Multiple namespaces**: `group_ids=["personal", "project-a", "project-b"]` searches all
-- **Original content**: `include_source=true` gives you full episode text (not just extracted facts)
-- **Save immediately**: Don't wait until end of session - remember() right after discovery
-- **Use context**: Add citations so you remember where ideas came from
-
----
-
-## Examples
-
-### Peek Before Load
 ```python
-# Check what's available
-result = recall(query="async patterns", group_ids=["personal"], max_tokens=0)
-print(f"Found {result['total_available']} memories, {result['token_estimate']} tokens")
-
-# If many tokens, maybe be more specific
-if result['token_estimate'] > 4000:
-    result = recall(
-        query="async patterns for websockets",
-        group_ids=["personal"],
-        max_tokens=2000
-    )
-```
-
-### Remember with Citation
-```python
-remember(
-    content="React hook deps array: include all values used in effect body",
-    group_id="personal",
-    context="React Hooks Rules - ESLint plugin docs"
+mcp__memories__remember(
+    content="What you discovered (be specific)",
+    group_id="your_namespace",  # From namespaces() call
+    context="Source/citation (optional)"
 )
 ```
 
-### Search Multiple Projects
+❌ **Waiting until session end = Forgotten learnings**
+✅ **Remember immediately after discovery**
+
+---
+
+## Critical Rules
+
+| Rule | Consequence |
+|------|-------------|
+| No `namespaces()` at session start | All memory calls fail |
+| Wrong `group_id` | 0 results returned |
+| `remember()` without `group_id` | Write fails |
+| Large `recall()` without `max_tokens` | Token explosion |
+| Guessing namespaces | Wrong or missing data |
+
+---
+
+## Quick Reference
+
 ```python
-# Search across personal + all projects
-recall(
-    query="type guards",
-    group_ids=["personal", "project-auth", "project-api"],
-    max_tokens=3000
-)
+# 1. Session start (ALWAYS FIRST)
+namespaces()
+
+# 2. Check what's available (FREE)
+recall(query="keywords", group_ids=["ns"], max_tokens=0)
+
+# 3. Load memories (BUDGET)
+recall(query="keywords", group_ids=["ns"], max_tokens=2000)
+
+# 4. Save discovery (IMMEDIATE)
+remember(content="finding", group_id="ns", context="source")
+
+# 5. List recent
+list(group_ids=["ns"], max_items=10)
+
+# 6. Delete old
+forget(id="memory_id")
 ```
 
 ---
 
-## Gotchas to Avoid
+## Hooks (Automatic)
 
-- Don't guess namespaces - always call `namespaces()` first
-- `max_tokens=null` (or omit) = unlimited - watch your token budget!
-- `include_source=true` has overhead - only use when needed
-- Sessions are isolated - each session has fresh context (hooks help with this)
-
----
-
-Start with `namespaces()` in your next session. Enjoy! 🚀
+- **SessionStart**: Prepares memory environment (transparent)
+- **PostToolUse**: Validates `remember()` succeeded (shows error if failed)
 
 ---
 
 ## Full API Documentation
 
-Need details on all 8 tools, parameters, response formats, and error handling?
+→ **[MCP_API_REFERENCE.md](MCP_API_REFERENCE.md)**
 
-→ See **[MCP_API_REFERENCE.md](MCP_API_REFERENCE.md)**
-
-Also covers:
-- Token budget control (peek/budget/unlimited)
-- Rate limits
-- Common workflows
-- Error handling guide
-- Best practices
+Covers: All 8 tools, parameters, response formats, error handling, rate limits, best practices.
