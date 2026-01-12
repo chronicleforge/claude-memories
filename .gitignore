@@ -1,0 +1,9 @@
+# Allow CLAUDE.md in this repo (documentation for end users)
+!CLAUDE.md
+
+# Standard ignores
+.DS_Store
+.env
+.env.local
+node_modules/
+*.log
