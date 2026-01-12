@@ -1,29 +1,29 @@
-# memories für Claude Code
+# memories for Claude Code
 
-Claude merkt sich euer Code. Patterns. Learnings. Session zu Session.
+Claude remembers your code patterns, learnings, and discoveries across sessions.
 
 > **TL;DR:**
 > ```bash
 > git clone https://github.com/chronicleforge/claude-memories.git && cd claude-memories
-> # Folgt QUICKSTART.md - fertig in 5 Minuten
+> # Follow QUICKSTART.md - setup in 5 minutes
 > ```
 
 ---
 
 ## How It Works
 
-- **remember**: Speichert Findings, Patterns, Gotchas
-- **recall**: Claude holt relevant Context automatisch
-- **namespaces**: personal, projects, shared (organized)
-- **Token Budget**: Ladet nur was nötig ist (effizient)
+- **remember**: Store findings, patterns, gotchas
+- **recall**: Claude automatically loads relevant context
+- **namespaces**: Organize memories (personal, projects, shared)
+- **Token Budget**: Load only what you need (efficient)
 
 ---
 
-## Setup in 3 Schritten
+## Setup in 3 Steps
 
 1. **Create Account** → https://memory.chronicleforge.app
 2. **Get API Key** → gm_xxxxx (copy-paste)
-3. **Add to Claude Code** → .claude/settings.json (fertig!)
+3. **Add to Claude Code** → .claude/settings.json (done!)
 
 See [QUICKSTART.md](QUICKSTART.md) for detailed steps (2 minutes).
 
@@ -85,7 +85,7 @@ Once set up, Claude will automatically:
 
 **Already familiar?** → See [CLAUDE.md](CLAUDE.md) for workflow guide
 
-**Need to troubleshoot?** → Check the FAQs section below
+**Need help?** → Check FAQs below
 
 ---
 
@@ -102,6 +102,9 @@ A: Yes! Use `group_ids=["personal", "project-x"]` to search multiple at once.
 
 **Q: What if the API is down?**
 A: Sessions continue normally. Hooks are non-blocking.
+
+**Q: How much does it cost?**
+A: memories API is available at https://memory.chronicleforge.app. Check pricing there.
 
 ---
 

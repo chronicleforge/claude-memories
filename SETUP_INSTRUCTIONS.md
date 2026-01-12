@@ -2,20 +2,20 @@
 
 ## For End Users
 
-### Schritt 1: Repo clonen
+### Step 1: Clone Repository
 
 ```bash
 git clone https://github.com/chronicleforge/claude-memories.git
 cd claude-memories
 ```
 
-### Schritt 2: Create Account & API Key
+### Step 2: Create Account & API Key
 
 - Go to https://memory.chronicleforge.app
 - Sign Up
 - API Keys → New Key → Copy key (gm_xxxxx)
 
-### Schritt 3: Tell Claude to Setup
+### Step 3: Tell Claude to Set Up
 
 Open Claude Code:
 
@@ -23,18 +23,18 @@ Open Claude Code:
 claude
 ```
 
-Sag:
+Say:
 
 ```
-setz mir memories auf.
+set up memories for me.
 api key: gm_xxxxx
 ```
 
-Claude wird dann automatisch:
-1. ✅ .claude/settings.json erstellen (from template)
-2. ✅ Hook-Scripts installieren
-3. ✅ Test mit `namespaces()`
-4. ✅ Fertig - ready to use!
+Claude will then automatically:
+1. ✅ Create `.claude/settings.json` (from template)
+2. ✅ Install hook scripts
+3. ✅ Test with `namespaces()`
+4. ✅ Done - ready to use!
 
 ---
 
@@ -43,7 +43,7 @@ Claude wird dann automatisch:
 | File | Purpose |
 |------|---------|
 | **README.md** | Overview + Getting Started |
-| **QUICKSTART.md** | 4-step guide (read this first!) |
+| **QUICKSTART.md** | 4-step setup guide (start here!) |
 | **CLAUDE.md** | Workflow guidelines |
 | **.claude/settings.json.example** | MCP config + hooks template |
 | **scripts/hydrate-memory.sh** | SessionStart hook (loads context) |
@@ -61,16 +61,16 @@ Claude wird dann automatisch:
 
 ### PostToolUse Hook (validate-memory-write.sh)
 - Runs after `remember()` call
-- Validates that write succeeded
+- Validates write succeeded
 - **Blocking** - stops if write failed
-- **Error clear** - user sees what went wrong
+- **Error clear** - shows what went wrong
 
 ---
 
 ## Next Steps
 
-1. [QUICKSTART.md](QUICKSTART.md) - Start here!
-2. [CLAUDE.md](CLAUDE.md) - Learn the workflow
-3. Begin using `namespaces()`, `recall()`, `remember()`
+1. [QUICKSTART.md](QUICKSTART.md) - Follow this to get started
+2. [CLAUDE.md](CLAUDE.md) - Learn the complete workflow
+3. Start using `namespaces()`, `recall()`, `remember()`
 
 Done! 🎉

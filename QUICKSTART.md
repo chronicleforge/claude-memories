@@ -1,73 +1,73 @@
 # Quick Start
 
-4 Schritte, ~5 Minuten. Fertig.
+4 steps, ~5 minutes. Done.
 
-## 1. Get Account
+## Step 1: Create Account
 
-Geh zu [https://memory.chronicleforge.app](https://memory.chronicleforge.app)
+Go to [https://memory.chronicleforge.app](https://memory.chronicleforge.app)
 
-- Klick "Sign Up"
-- Email + Password
-- Verify Email
+- Click "Sign Up"
+- Enter email + password
+- Verify your email
 
 Done.
 
-## 2. Create API Key
+## Step 2: Create API Key
 
 Dashboard → API Keys → New Key
 
-- Copy key (format: `gm_xxxxx`)
-- Sicherheit: Nie hardcoden, immer in Env-Variablen
+- Copy your key (format: `gm_xxxxx`)
+- **Security**: Never hardcode it. Use environment variables only.
 
-## 3. Sag Claude Setup
+## Step 3: Tell Claude to Set Up
 
-Starte Claude Code:
+Open Claude Code:
 
 ```bash
 claude
 ```
 
-Sag:
+Say:
 
-> "setz mir memories auf. api key: gm_xxxxx"
+> "set up memories for me. api key: gm_xxxxx"
 
-Claude macht dann:
-- Clone Repo von GitHub
-- Erstelle `.claude/settings.json`
-- Installiere Hooks
-- Test `namespaces()`
+Claude will then:
+- Clone the repository
+- Create `.claude/settings.json`
+- Install hooks
+- Test with `namespaces()`
 
-## 4. Done
+## Step 4: Done!
 
-Jetzt funktioniert:
+Now you can use:
 
+```python
+namespaces()                                         # See your namespaces
+recall(query="...", group_ids=["personal"])        # Load context
+remember(content="...", group_id="personal")       # Save findings
 ```
-namespaces()          # Deine Namespaces
-recall(query="...", group_ids=["personal"])   # Context laden
-remember(content="...", group_id="personal")  # Speichern
-```
 
-**Session läuft automatisch:**
-- SessionStart Hook lädt Context
-- PostToolUse Hook validiert Writes
+**Automatic hooks:**
+- SessionStart hook loads context
+- PostToolUse hook validates writes
 
 ---
 
 ## Troubleshooting
 
-**"Connection refused"** → Backend läuft nicht?
-- Mach `curl https://memory.chronicleforge.app/health`
-- Sollte `{"status":"healthy"}` zeigen
+**"Connection refused"** → Is the backend running?
+- Check: `curl https://memory.chronicleforge.app/health`
+- Should return: `{"status":"healthy"}`
 
-**"Invalid API key"** → Format falsch?
-- Keys sind `gm_` + 64 Zeichen
-- Neu erstellen im Dashboard
+**"Invalid API key"** → Wrong format?
+- Keys must start with `gm_` followed by 64 characters
+- Create a new one in the dashboard
 
-**Claude fragt nach Key?** → Im Prompt nicht kopiert?
-- Sag nochmal: "api key ist gm_xxxxx"
+**Claude asks for the key?** → Not copied in prompt?
+- Say again: "api key is gm_xxxxx"
 
 ---
 
-See [CLAUDE.md](CLAUDE.md) for workflow guide.
+See [CLAUDE.md](CLAUDE.md) for the complete workflow guide.
 
-Viel Spaß! 🚀
+Enjoy! 🚀
