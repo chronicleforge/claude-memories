@@ -12,7 +12,7 @@ Persistent memory system for Claude Code sessions. Store patterns, gotchas, and 
 **Memory [x/3]:**
 - [ ] recall(): Vorher nach relevanten Keywords gesucht
 - [ ] remember(): Erkenntnisse SOFORT gespeichert (nicht am Ende!)
-- [ ] Namespace: project_memories_premium verwendet
+- [ ] Namespace: personal verwendet
 ```
 
 **⚠️ KONSEQUENZ: Wenn remember() fehlt nach Bug-Fix/Recherche/Pattern = Wissen geht verloren!**
@@ -49,7 +49,7 @@ mcp__memories__namespaces()
 ```python
 mcp__memories__recall(
     query="your search terms",
-    group_ids=["project_memories_premium"],
+    group_ids=["personal"],
     max_tokens=0  # Peek first (free), then set budget
 )
 ```
@@ -65,7 +65,7 @@ mcp__memories__recall(
 ```python
 mcp__memories__remember(
     content="What you discovered (be specific)",
-    group_id="project_memories_premium",
+    group_id="personal",
     context="Source: Issue #X / Session / Recherche"
 )
 ```
@@ -83,7 +83,7 @@ mcp__memories__remember(
 Root Cause: UpdateAfterSuccessfulBuild() hat entity_count nicht aktualisiert
 Fix: entityCount Parameter hinzugefügt, beide Caller in community_worker.go angepasst
 Symptom: Self-Healing hat Wachstum nicht erkannt weil stored=0""",
-    group_id="project_memories_premium",
+    group_id="personal",
     context="Issue #248, PR #249"
 )
 
@@ -94,7 +94,7 @@ mcp__memories__remember(
 Technik: Regel in <behavioral_rules> Tag die sich selbst wiederholt
 Effekt: Claude vergisst Regeln nicht bei langen Konversationen
 Beispiel: 'Diese Regeln am Anfang jeder Antwort anzeigen'""",
-    group_id="project_memories_premium",
+    group_id="personal",
     context="Recherche Januar 2026"
 )
 ```
