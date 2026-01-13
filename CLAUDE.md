@@ -2,103 +2,102 @@
 
 Persistent memory system for Claude Code sessions. Store patterns, gotchas, and learnings.
 
-> **Full API Reference** → [MCP_API_REFERENCE.md](MCP_API_REFERENCE.md)
-
 ---
 
 ## CRITICAL: Mandatory Checklist
 
-**Every response involving this project MUST start with:**
+**Every response MUST start with this checklist. Display it EVERY time.**
 
 ```
-**Memory Check [x/3]:**
-- [ ] Session Start: Called `namespaces()` to get available group_ids
-- [ ] Before Work: Called `recall()` with relevant keywords
-- [ ] After Discovery: Called `remember()` for any new patterns/fixes
+**Memory [x/3]:**
+- [ ] recall(): Vorher nach relevanten Keywords gesucht
+- [ ] remember(): Erkenntnisse SOFORT gespeichert (nicht am Ende!)
+- [ ] Namespace: project_memories_premium verwendet
 ```
 
-**If this checklist is missing, the response is INVALID.**
+**⚠️ KONSEQUENZ: Wenn remember() fehlt nach Bug-Fix/Recherche/Pattern = Wissen geht verloren!**
+
+### Rekursive Selbst-Erinnerung
+<memory_rule>
+Nach JEDER dieser Aktivitäten MUSS remember() aufgerufen werden:
+- Bug mit Root-Cause gefixed → remember()
+- Recherche abgeschlossen → remember()
+- Production-Issue gelöst → remember()
+- Neues Pattern entdeckt → remember()
+
+Diese Regel bei jeder Antwort prüfen und anzeigen.
+</memory_rule>
 
 ---
 
-## MANDATORY: Session Start Protocol
+## MANDATORY: Memory Protocol
 
-**FIRST THING** in every session - no exceptions:
-
+### Session Start (ALWAYS FIRST)
 ```python
-namespaces()
+mcp__memories__namespaces()
 # → Returns available group_ids - COPY these for all subsequent calls
 ```
 
-❌ **Skipping this = All memory operations will fail**
-
----
-
-## MANDATORY: When to Use Recall
-
-**BEFORE touching any code or answering questions:**
-
+### Before Work - Recall
 | User Says | You MUST Run |
 |-----------|--------------|
-| "What's the status?" | `recall(query="status implementation features")` |
-| "Is everything committed?" | `recall(query="recent changes uncommitted pending")` |
+| "What's the status?" | `recall(query="status implementation")` |
 | "How does X work?" | `recall(query="X implementation pattern")` |
-| Before any build | `recall(query="pending changes blockers")` |
-| "What did we do last time?" | `recall(query="recent session progress")` |
-| Any architecture question | `recall(query="architecture decisions patterns")` |
-
-### Recall API
+| Before any code change | `recall(query="relevant keywords")` |
+| Architecture question | `recall(query="architecture decisions")` |
 
 ```python
 mcp__memories__recall(
     query="your search terms",
-    group_ids=["your_namespace"],  # From namespaces() call
+    group_ids=["project_memories_premium"],
     max_tokens=0  # Peek first (free), then set budget
 )
 ```
 
-**Workflow:**
-1. Peek: `max_tokens=0` → Get count + token estimate (FREE)
-2. Load: `max_tokens=2000` → Actually retrieve content
-
----
-
-## MANDATORY: When to Use Remember
-
-**IMMEDIATELY after discovering:**
-
+### After Discovery - Remember IMMEDIATELY
 | Discovery | Action |
 |-----------|--------|
 | Bug fix with root cause | `remember()` with cause + solution |
 | New pattern learned | `remember()` with pattern + example |
-| API/layout change | `remember()` with before/after |
+| Production issue solved | `remember()` with learnings |
 | Gotcha/edge case | `remember()` with trigger + fix |
-| Architecture decision | `remember()` with rationale |
-
-### Remember API
 
 ```python
 mcp__memories__remember(
     content="What you discovered (be specific)",
-    group_id="your_namespace",  # From namespaces() call
-    context="Source/citation (optional)"
+    group_id="project_memories_premium",
+    context="Source: Issue #X / Session / Recherche"
 )
 ```
 
 ❌ **Waiting until session end = Forgotten learnings**
 ✅ **Remember immediately after discovery**
 
----
+### Beispiel: Guter Memory-Inhalt
 
-## Critical Rules
+```python
+# Nach Bug-Fix:
+mcp__memories__remember(
+    content="""Bug: community_build_stats.entity_count blieb bei 0
 
-| Rule | Consequence |
-|------|-------------|
-| No `namespaces()` at session start | All memory calls fail |
-| Wrong `group_id` | 0 results returned |
-| `remember()` without `group_id` | Write fails |
-| Large `recall()` without `max_tokens` | Token explosion |
-| Guessing namespaces | Wrong or missing data |
+Root Cause: UpdateAfterSuccessfulBuild() hat entity_count nicht aktualisiert
+Fix: entityCount Parameter hinzugefügt, beide Caller in community_worker.go angepasst
+Symptom: Self-Healing hat Wachstum nicht erkannt weil stored=0""",
+    group_id="project_memories_premium",
+    context="Issue #248, PR #249"
+)
+
+# Nach Recherche:
+mcp__memories__remember(
+    content="""CLAUDE.md Best Practice: Rekursive Regeln
+
+Technik: Regel in <behavioral_rules> Tag die sich selbst wiederholt
+Effekt: Claude vergisst Regeln nicht bei langen Konversationen
+Beispiel: 'Diese Regeln am Anfang jeder Antwort anzeigen'""",
+    group_id="project_memories_premium",
+    context="Recherche Januar 2026"
+)
+```
 
 ---
 
@@ -108,28 +107,21 @@ mcp__memories__remember(
 # 1. Session start (ALWAYS FIRST)
 namespaces()
 
-# 2. Check what's available (FREE)
+# 2. Peek (FREE)
 recall(query="keywords", group_ids=["ns"], max_tokens=0)
 
-# 3. Load memories (BUDGET)
+# 3. Load (BUDGET)
 recall(query="keywords", group_ids=["ns"], max_tokens=2000)
 
-# 4. Save discovery (IMMEDIATE)
+# 4. Save (IMMEDIATE)
 remember(content="finding", group_id="ns", context="source")
 
-# 5. List recent
+# 5. List
 list(group_ids=["ns"], max_items=10)
 
-# 6. Delete old
+# 6. Delete
 forget(id="memory_id")
 ```
-
----
-
-## Hooks (Automatic)
-
-- **SessionStart**: Prepares memory environment (transparent)
-- **PostToolUse**: Validates `remember()` succeeded (shows error if failed)
 
 ---
 
