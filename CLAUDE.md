@@ -10,22 +10,22 @@ Persistent memory system for Claude Code sessions. Store patterns, gotchas, and 
 
 ```
 **Memory [x/3]:**
-- [ ] recall(): Vorher nach relevanten Keywords gesucht
-- [ ] remember(): Erkenntnisse SOFORT gespeichert (nicht am Ende!)
-- [ ] Namespace: personal verwendet
+- [ ] recall(): Searched for relevant keywords before work
+- [ ] remember(): Saved findings IMMEDIATELY (not at session end!)
+- [ ] Namespace: Used personal namespace
 ```
 
-**⚠️ KONSEQUENZ: Wenn remember() fehlt nach Bug-Fix/Recherche/Pattern = Wissen geht verloren!**
+**CONSEQUENCE: Missing remember() after bug-fix/research/pattern = Knowledge is lost!**
 
-### Rekursive Selbst-Erinnerung
+### Recursive Self-Reminder
 <memory_rule>
-Nach JEDER dieser Aktivitäten MUSS remember() aufgerufen werden:
-- Bug mit Root-Cause gefixed → remember()
-- Recherche abgeschlossen → remember()
-- Production-Issue gelöst → remember()
-- Neues Pattern entdeckt → remember()
+After EACH of these activities, remember() MUST be called:
+- Fixed bug with root cause → remember()
+- Completed research → remember()
+- Solved production issue → remember()
+- Discovered new pattern → remember()
 
-Diese Regel bei jeder Antwort prüfen und anzeigen.
+Check and display this rule at the start of every response.
 </memory_rule>
 
 ---
@@ -66,36 +66,36 @@ mcp__memories__recall(
 mcp__memories__remember(
     content="What you discovered (be specific)",
     group_id="personal",
-    context="Source: Issue #X / Session / Recherche"
+    context="Source: Issue #X / Session / Research"
 )
 ```
 
-❌ **Waiting until session end = Forgotten learnings**
-✅ **Remember immediately after discovery**
+**Waiting until session end = Forgotten learnings**
+**Remember immediately after discovery**
 
-### Beispiel: Guter Memory-Inhalt
+### Example: Good Memory Content
 
 ```python
-# Nach Bug-Fix:
+# After bug fix:
 mcp__memories__remember(
-    content="""Bug: community_build_stats.entity_count blieb bei 0
+    content="""Bug: community_build_stats.entity_count stayed at 0
 
-Root Cause: UpdateAfterSuccessfulBuild() hat entity_count nicht aktualisiert
-Fix: entityCount Parameter hinzugefügt, beide Caller in community_worker.go angepasst
-Symptom: Self-Healing hat Wachstum nicht erkannt weil stored=0""",
+Root Cause: UpdateAfterSuccessfulBuild() didn't update entity_count
+Fix: Added entityCount parameter, updated both callers in community_worker.go
+Symptom: Self-healing didn't detect growth because stored=0""",
     group_id="personal",
     context="Issue #248, PR #249"
 )
 
-# Nach Recherche:
+# After research:
 mcp__memories__remember(
-    content="""CLAUDE.md Best Practice: Rekursive Regeln
+    content="""CLAUDE.md Best Practice: Recursive Rules
 
-Technik: Regel in <behavioral_rules> Tag die sich selbst wiederholt
-Effekt: Claude vergisst Regeln nicht bei langen Konversationen
-Beispiel: 'Diese Regeln am Anfang jeder Antwort anzeigen'""",
+Technique: Rule in <behavioral_rules> tag that repeats itself
+Effect: Claude doesn't forget rules in long conversations
+Example: 'Display these rules at the start of every response'""",
     group_id="personal",
-    context="Recherche Januar 2026"
+    context="Research January 2026"
 )
 ```
 
