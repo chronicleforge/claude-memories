@@ -9,9 +9,10 @@ Persistent memory system for Claude Code sessions. Store patterns, gotchas, and 
 **Every response MUST start with this checklist. Display it EVERY time.**
 
 ```
-**Memory [x/3]:**
+**Memory [x/4]:**
 - [ ] recall(): Searched for relevant keywords before work
 - [ ] remember(): Saved findings IMMEDIATELY (not at session end!)
+- [ ] reflect(): Evaluated work afterwards ("Was that good?")
 - [ ] Namespace: Used personal namespace
 ```
 
@@ -24,6 +25,11 @@ After EACH of these activities, remember() MUST be called:
 - Completed research → remember()
 - Solved production issue → remember()
 - Discovered new pattern → remember()
+
+After EACH of these activities, reflect() MUST be called:
+- Implemented feature → reflect() (Was the solution good?)
+- Made architecture decision → reflect() (Was the choice right?)
+- Solved problem → reflect() (What did I learn from this?)
 
 Check and display this rule at the start of every response.
 </memory_rule>
@@ -100,6 +106,31 @@ mcp__memories__remember(
 **Waiting until session end = Forgotten learnings**
 **Remember IMMEDIATELY after discovery**
 
+### After Work - Reflect (Brain)
+
+Reflect is for **retrospective evaluation** - call it AFTER completing work to evaluate outcomes and form opinions.
+
+| Situation | You MUST Run |
+|-----------|--------------|
+| After implementation | `reflect(query="Was the solution good?")` |
+| After decision | `reflect(query="Was the choice right?")` |
+| After research | `reflect(query="What did I learn about this?")` |
+| Session end | `reflect(query="What was important today?")` |
+
+```python
+mcp__memories__reflect(
+    query="Was that a good solution?",
+    context="Optional: What was done"
+)
+# → Always uses personal namespace (Brain)
+# → Forms + stores opinions automatically
+# → Retrospective: AFTER actions, not before!
+```
+
+**When reflect() vs recall():**
+- `recall()` = Retrieve facts ("What is X?") - BEFORE work
+- `reflect()` = Evaluate ("Was that good?") - AFTER work
+
 ### Example: Good Memory Content
 
 ```python
@@ -171,10 +202,13 @@ recall(query="keywords", group_ids=["ns"], max_tokens=2000)
 # 4. Save (IMMEDIATE)
 remember(content="finding", group_id="ns", context="source")
 
-# 5. List
+# 5. Reflect (AFTER work)
+reflect(query="Was that good?")  # Brain-only, no group_id needed
+
+# 6. List
 list(group_ids=["ns"], max_items=10)
 
-# 6. Delete
+# 7. Delete
 forget(id="memory_id")
 ```
 

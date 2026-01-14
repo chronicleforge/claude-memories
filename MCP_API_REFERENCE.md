@@ -185,48 +185,71 @@ result = recall(
 
 ### reflect
 
-**Generate insights from memory using LLM synthesis.**
+**Generate insights from memory using LLM reflection. Brain-only operation.**
 
-Uses Claude to analyze and synthesize information across memories.
+Reflect is for **retrospective evaluation** - call it AFTER completing work to evaluate outcomes and form opinions. Always uses your personal namespace (Brain) - no group_id parameter needed.
+
+**Key Concept:** Reflect enables opinion formation. Unlike recall (which retrieves facts), reflect uses LLM synthesis to evaluate and form opinions based on your stored knowledge.
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | string | ✅ Yes | Question or topic to reflect on (e.g., `"What patterns have I noticed?"`) |
-| `group_ids` | array[string] | ❌ No | Filter by namespaces. Empty array searches all accessible. |
-| `context` | string | ❌ No | Additional context to guide the reflection (e.g., `"Focus on frontend patterns"`) |
+| `query` | string | ✅ Yes | Question or topic to reflect on. Best for retrospective questions like "Was that good?" or "What did I learn?" |
+| `context` | string | ❌ No | Additional context to guide the reflection (e.g., `"Just finished implementing the auth feature"`) |
+
+**Note:** No `group_id` or `group_ids` parameter - reflect always operates on your personal namespace (Brain).
 
 **Response:**
 
 ```json
 {
-  "content": "Claude's synthesized insights based on memories"
+  "answer": "Claude's synthesized insight/opinion based on memories",
+  "sources": [
+    {
+      "id": "hs:memory_id",
+      "content": "Source memory content",
+      "type": "opinion|fact|experience"
+    }
+  ],
+  "message": "Reflected on personal namespace (Brain)"
 }
 ```
+
+**When to Use:**
+
+| Situation | Example Query |
+|-----------|--------------|
+| After implementing a feature | `"Was the solution I just built good?"` |
+| After making a decision | `"Was choosing X over Y the right call?"` |
+| After research/debugging | `"What did I learn about this bug?"` |
+| Session end | `"What was important today?"` |
 
 **Examples:**
 
 ```python
-# Reflect on patterns
+# Evaluate a solution (retrospective)
 reflect(
-    query="What are the most common bugs I've encountered?",
-    group_ids=["personal"]
+    query="Was that a good implementation?",
+    context="Just finished adding the caching layer"
 )
 
-# Reflect with focus
+# Form opinion on approach
 reflect(
-    query="How should I structure this new feature?",
-    group_ids=["personal", "project-x"],
-    context="Building a real-time notification system"
+    query="Should I prefer composition over inheritance?",
+    context="After refactoring the auth module"
 )
 
-# Cross-project reflection
-reflect(
-    query="What patterns have I repeated across projects?",
-    group_ids=["personal", "project-a", "project-b"]
-)
+# Session reflection
+reflect(query="What patterns worked well today?")
 ```
+
+**Reflect vs Recall:**
+
+| Tool | Purpose | When |
+|------|---------|------|
+| `recall()` | Retrieve facts | BEFORE work |
+| `reflect()` | Evaluate & form opinions | AFTER work |
 
 ---
 
@@ -485,15 +508,15 @@ else:
     )
 ```
 
-### Workflow 3: Cross-Project Reflection
+### Workflow 3: Session-End Reflection
 
 ```python
-# Get insights across all projects
+# Reflect on today's work (Brain-only, uses personal namespace)
 insights = reflect(
-    query="What patterns have worked best?",
-    group_ids=["personal", "project-a", "project-b"]
+    query="What was important today?",
+    context="Worked on auth refactoring and bug fixes"
 )
-print(insights['content'])
+print(insights['answer'])
 ```
 
 ### Workflow 4: Mandatory Session Start
