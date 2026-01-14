@@ -39,12 +39,23 @@ mcp__memories__namespaces()
 ```
 
 ### Before Work - Recall
+
+**BEFORE answering, search memories when user says ANY of:**
+- "where were we", "continue", "pick up", "resume"
+- "check the diff", "what's the status", "progress"
+- "what did we do", "last session", "yesterday"
+- "that problem", "the bug", "the feature"
+- ANY continuation/context question
+
+**NO EXCEPTIONS.** Do not ask "what were we working on?" - search memories first.
+
 | User Says | You MUST Run |
 |-----------|--------------|
+| "where were we" | `recall(query="recent work progress")` |
+| "continue", "pick up" | `recall(query="current task implementation")` |
+| "that bug", "the issue" | `recall(query="bug fix problem")` |
 | "What's the status?" | `recall(query="status implementation")` |
 | "How does X work?" | `recall(query="X implementation pattern")` |
-| Before any code change | `recall(query="relevant keywords")` |
-| Architecture question | `recall(query="architecture decisions")` |
 
 ```python
 mcp__memories__recall(
@@ -55,6 +66,22 @@ mcp__memories__recall(
 ```
 
 ### After Discovery - Remember IMMEDIATELY
+
+**You MUST save to memories when ANY of these happen:**
+- You fix a bug → save the problem + solution
+- You discover why something works/fails → save the insight
+- You find a pattern or gotcha → save it
+- You complete an analysis → save the conclusion
+- User expresses a preference → save it
+- You figure out something non-obvious → save it
+
+**Self-trigger phrases (save when you think/say):**
+- "Ah, the problem was..."
+- "This works because..."
+- "The fix is..."
+- "I found that..."
+- "The issue was..."
+
 | Discovery | Action |
 |-----------|--------|
 | Bug fix with root cause | `remember()` with cause + solution |
@@ -71,7 +98,7 @@ mcp__memories__remember(
 ```
 
 **Waiting until session end = Forgotten learnings**
-**Remember immediately after discovery**
+**Remember IMMEDIATELY after discovery**
 
 ### Example: Good Memory Content
 
@@ -98,6 +125,34 @@ Example: 'Display these rules at the start of every response'""",
     context="Research January 2026"
 )
 ```
+
+---
+
+## Team Namespaces (Optional)
+
+For shared projects, you can use multiple namespaces:
+
+| Namespace | Purpose |
+|-----------|---------|
+| **`project-name`** | Team-shared: architecture, patterns, bug fixes, decisions |
+| **`personal`** | Individual: personal preferences, workflows |
+
+**When querying, search both:**
+```python
+recall(query="keywords", group_ids=["project-name", "personal"])
+```
+
+**When saving, choose deliberately:**
+
+| Save to team namespace | Save to `personal` |
+|------------------------|-------------------|
+| Bug fix in THIS codebase | How to write CLAUDE.md instructions |
+| Architecture decision for THIS project | Personal workflow preferences |
+| Pattern discovered in THIS code | IDE/tooling choices |
+| Gotcha specific to THIS tech stack | Meta-learnings about working with Claude |
+| API behavior, framework quirks | Communication style preferences |
+
+**Rule of thumb:** If another team member would benefit from this knowledge about the *project*, use the team namespace. If it's about *how you work* or *meta-knowledge*, use `personal`.
 
 ---
 
